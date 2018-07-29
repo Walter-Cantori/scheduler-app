@@ -1,0 +1,15 @@
+export default {
+  purpleMain: '#A55BD7',
+  purpleBack: '#8B48B8',
+  whiteTitles: '#DADADA',
+  green: '#49C7A7',
+  blue: '#5ECCE3',
+  red: '#E35E5E',
+  white: '#FFFF',
+  grey: '#C0C0C0',
+  transparent: 'rgba(0,0,0,0.5)',
+  greyInput: '#EEEEEE',
+  greyInputText: '#999999',
+  greyCancelLink: '#666666',
+  purpleLink: '#E8C7FF',
+};
