@@ -5,7 +5,7 @@ import {
 import PropTypes from 'prop-types';
 
 import styles from './styles';
-import Share from '../Share';
+import ShareComponent from '../ShareComponent';
 import Delete from '../Delete';
 
 class Event extends Component {
@@ -80,7 +80,7 @@ class Event extends Component {
     const { showShare, showDelete, offset } = this.state;
     return (
       <View style={styles.outterContainer}>
-        {showShare && <Share />}
+        {showShare && <ShareComponent />}
         <Animated.View
           {...this.panResponder.panHandlers}
           style={[

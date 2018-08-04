@@ -50,20 +50,20 @@ const events = [
     date: '20/07/2018',
     time: '19:00',
   },
-  {
-    id: 5,
-    title: 'event3',
-    location: 'location3',
-    date: '20/07/2018',
-    time: '19:00',
-  },
-  {
-    id: 6,
-    title: 'event3',
-    location: 'location3',
-    date: '20/07/2018',
-    time: '19:00',
-  },
+  // {
+  //   id: 5,
+  //   title: 'event3',
+  //   location: 'location3',
+  //   date: '20/07/2018',
+  //   time: '19:00',
+  // },
+  // {
+  //   id: 6,
+  //   title: 'event3',
+  //   location: 'location3',
+  //   date: '20/07/2018',
+  //   time: '19:00',
+  // },
 ];
 
 LocaleConfig.locales.br = {
