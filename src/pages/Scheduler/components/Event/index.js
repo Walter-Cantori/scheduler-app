@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  View, Text, ScrollView,
+  View, Text, PanResponder, Animated,
 } from 'react-native';
 
 import styles from './styles';
@@ -8,66 +8,98 @@ import Share from '../Share';
 import Delete from '../Delete';
 
 class Event extends Component {
-  state = {
-    showShare: false,
-    showDelete: false,
-    scrollStart: 0,
-  }
+  constructor(props) {
+    super(props);
 
-  scrollEnd = (e) => {
-    const { x } = e.nativeEvent.contentOffset;
-    const { scrollStart, showDelete, showShare } = this.state;
+    this.state = {
+      showShare: false,
+      showDelete: false,
+      offset: new Animated.ValueXY({ x: 0, y: 0 }),
+    };
+    this._panResponder = PanResponder.create({
+      onPanResponderTerminationRequest: () => false,
+      onMoveShouldSetPanResponder: () => true,
 
-    if (x === scrollStart && x === 0) {
-      this.setState({
-        showDelete: false,
-        showShare: true,
-      });
-    }
+      onPanResponderMove: Animated.event([null, {
+        dx: this.state.offset.x,
+      }]),
 
-    if (x > scrollStart && !showShare) {
-      this.setState({
-        showDelete: true,
-      });
-    }
+      onPanResponderRelease: () => {
+        if (this.state.offset.x._value < -100) {
+          if (!this.state.showShare) {
+            this.setState({
+              showShare: false,
+              showDelete: true,
+            });
+          } else {
+            this.setState({
+              showShare: false,
+              showDelete: false,
+            });
+          }
+        }
+        if (this.state.offset.x._value > 100) {
+          if (!this.state.showDelete) {
+            this.setState({
+              showShare: true,
+              showDelete: false,
+            });
+          } else {
+            this.setState({
+              showShare: false,
+              showDelete: false,
+            });
+          }
+        }
+        Animated.spring(this.state.offset.x, {
+          toValue: 0,
+          bounciness: 10,
+        }).start();
+      },
 
-    if (x > scrollStart && showShare) {
-      this.setState({
-        showDelete: false,
-        showShare: false,
-      });
-    }
+      onPanResponderTerminate: () => {
+        Animated.spring(this.state.offset.x, {
+          toValue: 0,
+          bounciness: 10,
+        }).start();
+      },
+    });
   }
 
   render() {
     const { data: { title, location, time } } = this.props;
-    const { showShare, showDelete } = this.state;
+    const { showShare, showDelete, offset } = this.state;
     return (
-      <ScrollView
-        horizontal={true}
-        contentContainerStyle={styles.outterContainer}
-        onScrollBeginDrag={e => this.setState({ scrollStart: e.nativeEvent.contentOffset.x })}
-        onScrollEndDrag={this.scrollEnd}
-      >
-        {showShare && <Share /> }
-        <View style={[styles.container, showDelete && styles.showDelete]}>
-            <View>
-              <Text style={styles.title}>
-                {title}
-              </Text>
-              <Text style={styles.location}>
-                {location}
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.time}>
-                {time}
-              </Text>
-            </View>
-
-        </View>
-        {showDelete && <Delete /> }
-    </ScrollView>
+      <View style={styles.outterContainer}>
+        {showShare && <Share />}
+        <Animated.View
+          {...this._panResponder.panHandlers}
+          style={[
+            styles.container,
+            showDelete && styles.delete,
+            {
+              transform: [
+                ...offset.getTranslateTransform(),
+              ],
+            },
+          ]}
+        >
+          <View>
+            <Text style={styles.title}>
+              {title}
+            </Text>
+            <Text style={styles.location}>
+              {location}
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.time}>
+              {time}
+            </Text>
+          </View>
+        </Animated.View>
+        { showDelete && <Delete />}
+      </View>
     );
   }
 }

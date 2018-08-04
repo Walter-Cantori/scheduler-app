@@ -3,22 +3,23 @@ import { metrics, colors } from '../../../../styles';
 
 const styles = StyleSheet.create({
   outterContainer: {
-    width: 380,
     flexDirection: 'row',
     height: 80,
     marginBottom: metrics.basePadding,
+    paddingHorizontal: metrics.basePadding,
   },
   container: {
     height: '100%',
-    width: 320,
+    width: '100%',
     backgroundColor: colors.white,
     marginBottom: metrics.basePadding,
     padding: metrics.basePadding,
     borderRadius: metrics.baseRadius,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: metrics.basePadding,
-
+  },
+  delete: {
+    marginLeft: -90,
   },
   title: {
     fontWeight: 'bold',
