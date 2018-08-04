@@ -2,12 +2,21 @@ import React, { Component } from 'react';
 import {
   View, Text, PanResponder, Animated,
 } from 'react-native';
+import PropTypes from 'prop-types';
 
 import styles from './styles';
 import Share from '../Share';
 import Delete from '../Delete';
 
 class Event extends Component {
+  static propTypes = {
+    data: PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      location: PropTypes.string.isRequired,
+      time: PropTypes.string.isRequired,
+    }).isRequired,
+  };
+
   constructor(props) {
     super(props);
 
@@ -16,7 +25,7 @@ class Event extends Component {
       showDelete: false,
       offset: new Animated.ValueXY({ x: 0, y: 0 }),
     };
-    this._panResponder = PanResponder.create({
+    this.panResponder = PanResponder.create({
       onPanResponderTerminationRequest: () => false,
       onMoveShouldSetPanResponder: () => true,
 
@@ -73,7 +82,7 @@ class Event extends Component {
       <View style={styles.outterContainer}>
         {showShare && <Share />}
         <Animated.View
-          {...this._panResponder.panHandlers}
+          {...this.panResponder.panHandlers}
           style={[
             styles.container,
             showDelete && styles.delete,

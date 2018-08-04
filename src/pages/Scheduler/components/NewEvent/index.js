@@ -3,6 +3,7 @@ import {
   Modal, Text, View, TextInput, TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import PropTypes from 'prop-types';
 
 import { colors } from '../../../../styles';
 import styles from './styles';
@@ -12,7 +13,7 @@ const NewEvent = ({ visible, closeModal }) => (
     visible={visible}
     animationType="fade"
     onRequestClose={closeModal}
-    transparent={true}
+    transparent
   >
     <View style={styles.outterContainer}>
       <View style={styles.innerContainer}>
@@ -57,7 +58,11 @@ const NewEvent = ({ visible, closeModal }) => (
     </View>
 
   </Modal>
-
 );
+
+NewEvent.propTypes = {
+  visible: PropTypes.bool.isRequired,
+  closeModal: PropTypes.func.isRequired,
+};
 
 export default NewEvent;

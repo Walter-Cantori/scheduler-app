@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { View, FlatList, Animated, Text, TouchableOpacity, PanResponder } from 'react-native';
+import {
+  View,
+  FlatList,
+  Animated,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors } from '../../styles';
 
@@ -60,7 +66,7 @@ const events = [
   },
 ];
 
-LocaleConfig.locales['br'] = {
+LocaleConfig.locales.br = {
   monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
   monthNamesShort: ['Jan', 'Fev', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
   dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sabado'],
@@ -102,10 +108,7 @@ class Scheduler extends Component {
   }
 
   setDates = (date) => {
-    let auxDate = new Date(date.dateString);
-    auxDate = auxDate.setDate(auxDate.getDate() + 1);
-
-    const dayText = this.formatDayText(new Date(auxDate));
+    const dayText = this.formatDayText(new Date(`${date.dateString} 00:00:00`));
 
     this.setState({
       selectedDate: date.dateString,
@@ -113,8 +116,29 @@ class Scheduler extends Component {
     });
   }
 
-  changeDates = () => {
-    alert('test');
+  changeDates = (operator) => {
+    const { selectedDate: date } = this.state;
+    let newDate = new Date(`${date} 00:00:00`);
+
+    switch (operator) {
+      case '+':
+        newDate = new Date(newDate.setDate(newDate.getDate() + 1));
+        break;
+      case '-':
+        newDate = new Date(newDate.setDate(newDate.getDate() - 1));
+        break;
+      default:
+        break;
+    }
+
+    const dayText = this.formatDayText(newDate);
+    newDate = newDate.toLocaleDateString('en', dateOptions).split('/');
+    const selectedDate = `${newDate[2]}-${newDate[0]}-${newDate[1]}`;
+
+    this.setState({
+      selectedDate,
+      dayText,
+    });
   }
 
   formatDayText = (date) => {
@@ -127,7 +151,6 @@ class Scheduler extends Component {
 
   render() {
     const { scrollOffset, dayText, selectedDate } = this.state;
-    console.log(scrollOffset._value)
     return (
       <View style={styles.container}>
         <Animated.View style={[
@@ -146,13 +169,13 @@ class Scheduler extends Component {
           },
         ]}
         >
-          <TouchableOpacity onPress={this.changeDates}>
+          <TouchableOpacity onPress={() => this.changeDates('-')}>
             <Icon style={styles.Icon} size={24} color="#DADADA" name="arrow-left-bold" />
           </TouchableOpacity>
           <Text style={styles.title}>
             { dayText }
           </Text>
-          <TouchableOpacity onPress={this.changeDates}>
+          <TouchableOpacity onPress={() => this.changeDates('+')}>
             <Icon style={styles.Icon} size={24} color="#DADADA" name="arrow-right-bold" />
           </TouchableOpacity>
         </Animated.View>
@@ -167,7 +190,7 @@ class Scheduler extends Component {
             }),
             opacity: scrollOffset.interpolate({
               inputRange: [0, 80],
-              outputRange: [1, 1],
+              outputRange: [1, 0],
               extrapolate: 'clamp',
             }),
             transform: [{
@@ -185,7 +208,7 @@ class Scheduler extends Component {
             markedDates={{
               [selectedDate]: {
                 selected: true, marked: true, selectedColor: colors.blue,
-              }
+              },
             }}
             theme={{
               calendarBackground: colors.purpleBack,

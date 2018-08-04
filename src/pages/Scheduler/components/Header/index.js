@@ -3,12 +3,17 @@ import {
   View, Text, TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import PropTypes from 'prop-types';
 
 import styles from './styles';
 import NewEvent from '../NewEvent';
 
 
 class Header extends Component {
+  static propTypes = {
+    openMyAccount: PropTypes.func.isRequired,
+  };
+
   state = {
     showModal: false,
   };

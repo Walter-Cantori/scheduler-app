@@ -14,6 +14,8 @@
     "plugin:react-native/all"
   ],
   "rules": {
+    "react/destructuring-assignment": ["disabled", "always"],
+    "no-underscore-dangle": 0,
     "react/jsx-filename-extension": [
       "error",
       {

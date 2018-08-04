@@ -3,6 +3,7 @@ import {
   Text, View, TextInput, TouchableOpacity, StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import PropTypes from 'prop-types';
 
 import { colors } from '../../styles';
 import styles from './styles';
@@ -31,6 +32,12 @@ const Identify = props => (
     </TouchableOpacity>
   </View>
 );
+
+Identify.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};
 
 Identify.navigationOptions = {
   header: null,

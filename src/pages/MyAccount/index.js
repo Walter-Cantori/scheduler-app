@@ -3,6 +3,7 @@ import {
   Text, View, TextInput, TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import PropTypes from 'prop-types';
 
 import { colors } from '../../styles';
 import styles from './styles';
@@ -50,6 +51,12 @@ const myAccount = props => (
     </TouchableOpacity>
   </View>
 );
+
+myAccount.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};
 
 myAccount.navigationOptions = {
   title: 'SCHEDULER',
