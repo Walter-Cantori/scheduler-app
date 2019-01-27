@@ -6,8 +6,10 @@ import {
   Animated,
   Text,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import moment from 'moment';
 import { colors } from '../../styles';
 
 import styles from './styles';
@@ -72,11 +74,9 @@ LocaleConfig.locales.br = {
   dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sabado'],
   dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
 };
-
 LocaleConfig.defaultLocale = 'br';
 
 const dayOptions = { weekday: 'long', month: 'long', day: 'numeric' };
-const dateOptions = { month: '2-digit', day: '2-digit', year: 'numeric' };
 
 class Scheduler extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -95,12 +95,8 @@ class Scheduler extends Component {
   }
 
   componentDidMount() {
-    let auxDate = new Date();
-
-    const dayText = this.formatDayText(auxDate);
-    auxDate = auxDate.toLocaleDateString('en', dateOptions).split('/');
-    const selectedDate = `${auxDate[2]}-${auxDate[0]}-${auxDate[1]}`;
-
+    const selectedDate = moment().format('YYYY-MM-DD');
+    const dayText = this.formatDayText(selectedDate);
     this.setState({
       selectedDate,
       dayText,
@@ -108,7 +104,7 @@ class Scheduler extends Component {
   }
 
   setDates = (date) => {
-    const dayText = this.formatDayText(new Date(`${date.dateString} 00:00:00`));
+    const dayText = this.formatDayText(date.dateString);
 
     this.setState({
       selectedDate: date.dateString,
@@ -118,31 +114,28 @@ class Scheduler extends Component {
 
   changeDates = (operator) => {
     const { selectedDate: date } = this.state;
-    let newDate = new Date(`${date} 00:00:00`);
-
+    let newDate;
     switch (operator) {
       case '+':
-        newDate = new Date(newDate.setDate(newDate.getDate() + 1));
+        newDate = moment(date, 'YYYY-MM-DD').add(1, 'd').format('YYYY-MM-DD');
         break;
       case '-':
-        newDate = new Date(newDate.setDate(newDate.getDate() - 1));
+        newDate = moment(date, 'YYYY-MM-DD').subtract(1, 'd').format('YYYY-MM-DD');
         break;
       default:
         break;
     }
 
     const dayText = this.formatDayText(newDate);
-    newDate = newDate.toLocaleDateString('en', dateOptions).split('/');
-    const selectedDate = `${newDate[2]}-${newDate[0]}-${newDate[1]}`;
 
     this.setState({
-      selectedDate,
+      selectedDate: newDate,
       dayText,
     });
   }
 
   formatDayText = (date) => {
-    const auxDate = date.toLocaleDateString('pt-BR', dayOptions).split(' ');
+    const auxDate = new Date(`${date}`).toLocaleDateString('pt-BR', dayOptions).split(' ');
     auxDate[0] = auxDate[0][0].toUpperCase() + auxDate[0].slice(1);
     auxDate[auxDate.length - 1] = auxDate[auxDate.length - 1][0]
       .toUpperCase() + auxDate[auxDate.length - 1].slice(1);
@@ -180,28 +173,31 @@ class Scheduler extends Component {
           </TouchableOpacity>
         </Animated.View>
 
-        <Animated.View style={[
-          styles.calendar,
-          {
-            height: scrollOffset.interpolate({
-              inputRange: [0, 80],
-              outputRange: [300, 0],
-              extrapolate: 'clamp',
-            }),
-            opacity: scrollOffset.interpolate({
-              inputRange: [0, 80],
-              outputRange: [1, 0],
-              extrapolate: 'clamp',
-            }),
-            transform: [{
-              translateY: scrollOffset.interpolate({
-                inputRange: [0, 80],
-                outputRange: [0, -300],
+        <Animated.View
+          style={[
+            styles.calendar,
+            {
+              height: scrollOffset.interpolate({
+                inputRange: [0, 100],
+                outputRange: [300, 0],
                 extrapolate: 'clamp',
               }),
-            }],
-          },
-        ]}
+              opacity: scrollOffset.interpolate({
+                inputRange: [0, 50, 100],
+                outputRange: [1, 0.5, 0],
+                extrapolate: 'clamp',
+              }),
+              transform: [
+                {
+                  translateY: scrollOffset.interpolate({
+                    inputRange: [0, 100],
+                    outputRange: [0, -800],
+                    extrapolate: 'clamp',
+                  }),
+                },
+              ],
+            },
+          ]}
         >
           <Calendar
             onDayPress={day => this.setDates(day)}
@@ -220,26 +216,38 @@ class Scheduler extends Component {
               arrowColor: colors.whiteTitles,
               monthTextColor: colors.whiteTitles,
               textMonthFontWeight: 'bold',
-              textDayFontSize: 14,
+              textDayFontSize: 12,
               textMonthFontSize: 18,
               textDayHeaderFontSize: 14,
             }}
           />
         </Animated.View>
 
-        <View style={styles.eventList}>
-          <FlatList
-            scrollEventThrottle={16}
-            onScroll={Animated.event([{
-              nativeEvent: {
-                contentOffset: { y: scrollOffset },
-              },
-            }])}
-            data={events}
-            keyExtractor={item => String(item.id)}
-            renderItem={({ item }) => <Event data={item} />}
-          />
-        </View>
+        <Animated.View style={styles.eventList}>
+          {Platform.OS === 'ios'
+            ? (
+              <FlatList
+                scrollEventThrottle={16}
+                onScroll={Animated.event([{
+                  nativeEvent: {
+                    contentOffset: { y: scrollOffset },
+                  },
+                }])}
+                data={events}
+                keyExtractor={item => String(item.id)}
+                renderItem={({ item }) => <Event data={item} />}
+              />
+            )
+            : (
+              <FlatList
+                scrollEventThrottle={16}
+                data={events}
+                keyExtractor={item => String(item.id)}
+                renderItem={({ item }) => <Event data={item} />}
+              />
+            )
+          }
+        </Animated.View>
       </View>
     );
   }

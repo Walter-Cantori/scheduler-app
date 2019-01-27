@@ -1,16 +1,18 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { colors, metrics, common } from '../../styles';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.purpleMain,
+    paddingBottom: 20,
   },
   calendar: {
     width: '100%',
     backgroundColor: colors.purpleBack,
   },
   eventList: {
+    flex: Platform.OS === 'android' ? 1 : 0,
     height: 450,
     marginTop: metrics.baseMargin,
     paddingVertical: metrics.basePadding,

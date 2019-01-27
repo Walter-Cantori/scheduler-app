@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...common.title,
+    marginTop: 40,
   },
   inputContainer: {
     ...common.inputContainer,

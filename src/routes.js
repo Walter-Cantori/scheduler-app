@@ -16,7 +16,7 @@ const Router = createStackNavigator(
     MyAccount,
   },
   {
-    initialRouteName: 'Scheduler',
+    initialRouteName: 'Identify',
     navigationOptions: {
       headerStyle: {
         backgroundColor: colors.purpleMain,
